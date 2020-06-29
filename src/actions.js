@@ -1,3 +1,11 @@
+const {
+	Spectral,
+	isOpenApiv2,
+	isOpenApiv3,
+	isAsyncApiv2
+} = require('@stoplight/spectral');
+
+
 /**
  * Action method.
  *
@@ -17,17 +25,43 @@
  * @param {*} [options.pluginContext] - The data provided by passing the
  *	 context to `sdk.load(file, actions, { pluginContext })` in `getPlugin`
  *	 in `index.js`.
- * @return {*} The response value (resolves to "next" output, or if the method
- *	 does not define "next", the first defined output).
+ * @return {*} The response value (resolves to 'next' output, or if the method
+ *	 does not define 'next', the first defined output).
  */
-async function hello(params) {
-	const { name } = params;
-	if (!name) {
-		throw new Error('Missing required parameter: name');
+async function lint(params) {
+	const { document } = params;
+	let { type, rules } = params;
+	
+	type = type || 'oas';
+
+	if (!document) {
+		throw new Error('Missing required parameter: document');
 	}
-	return `Hello ${name}`;
+
+	if (type != 'oas' && type != 'asyncapi') {
+		throw new Error(`Invalid value for type: [${type}]`);
+	}
+	
+	const spectral = new Spectral();
+	let baserules = '';
+	rules = rules || {};
+
+	if (type == 'asyncapi') {
+		spectral.registerFormat('asyncapi', isAsyncApiv2);
+		baserules = 'spectral:asyncapi';
+	} else {
+		spectral.registerFormat('oas2', isOpenApiv2);
+		spectral.registerFormat('oas3', isOpenApiv3);
+		baserules = 'spectral:oas';
+	}
+
+	return spectral
+		.loadRuleset(baserules)
+		.then(() => spectral.mergeRules(rules))
+		.then(() => spectral.run(document));
+		//.then((res) => { console.log(res); return res; })
 }
 
 module.exports = {
-	hello
+	lint
 };

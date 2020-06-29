@@ -1,0 +1,52 @@
+{
+	"x-enabled": {
+		"enabled": true
+	},
+	"swagger": "2.0",
+	"info": {
+		"description": "Greeting functions",
+		"version": "1.0.0",
+        "title": "Greeting API",
+        "contact": {
+            "name": "testing"
+        }
+    },
+    "host": "testing",
+    "schemes": [ "http" ],
+    "tags": [{
+        "name": "helloworld"
+    }],
+	"paths": {
+		"/greet": {
+			"get": {
+				"x-flow": "GreetFlow",
+				"description": "",
+				"operationId": "Greet",
+				"parameters": [
+					{
+						"description": "The username",
+						"in": "query",
+						"name": "username",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "greeting"
+					},
+					"400": {
+						"description": "bad request"
+					}
+				},
+				"summary": "Greet a user",
+				"tags": [
+					"helloworld"
+				]
+			}
+		}
+	}
+}

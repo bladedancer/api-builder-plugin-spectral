@@ -1,28 +1,45 @@
 flow-nodes:
   spectral:
-    name: Hello World
+    name: Spectral
     icon: icon.svg
-    description: Example flow-node to say hello.
+    description: Use Stoplight Spectral to perform OAS linting.
     category: general
     methods:
-      hello: # This same key is used in `actions.js`
-        name: Say Hello
-        description: Generates a greeting.
+      lint: 
+        name: Lint
+        description: Lint the API specification.
         parameters:
-          name:
-            name: Name
-            description: The name of the person to greet.
+          document:
+            name: Document
+            description: The API Specification to lint.
             required: true
             initialType: string
             schema:
               type: string
+          type:
+            name: Type
+            description: The API Specification type.
+            required: false
+            initialType: string
+            schema:
+              type: string
+              enum:
+                - oas
+                - asyncapi
+          rules:
+            name: Rules
+            description: Additional custom rules.
+            required: false
+            initialType: object
+            schema:
+              type: object               
         # "Next" (next) output
         returns:
           name: Next
-          description: The operation was successful.
-          context: $.hello
+          description: The linter results.
+          context: $.results
           schema:
-            type: string
+            type: object
         # "Error" (error) output
         throws:
           name: Error
